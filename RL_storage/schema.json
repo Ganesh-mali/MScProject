@@ -1,0 +1,102 @@
+{
+    "root_directory": null,
+    "central_agent": true,
+    "simulation_start_time_step": 0,
+    "simulation_end_time_step": 8760,
+    "seconds_per_time_step": 3600.0,
+    "episodes": 1,
+    "data_path": "C:\\Kings_College_Subject_Docs\\MSc_Individual_Project\\PAID_PROJECT\\week_2_update\\RL+algo_practice\\city_learn_simulation\\submission",
+    "weather_file": "weather_data.csv",
+    "solar_profile": "solar_generation.csv",
+    "building_ids": ["Building_1"],
+    "cost_function": ["ramping", "1-load_factor", "average_daily_peak", "peak_demand", "net_electricity_consumption", "quadratic"],
+    "observations": {
+        "month": {"active": true,"shared_in_central_agent": true},
+        "day_type": {"active": true,"shared_in_central_agent": true},
+        "hour": {"active": true,"shared_in_central_agent": true},
+        "outdoor_dry_bulb_temperature": {"active": true,"shared_in_central_agent": true},
+        "diffuse_solar_irradiance": {"active": true,"shared_in_central_agent": true},
+        "direct_solar_irradiance": {"active": true,"shared_in_central_agent": true},
+        "carbon_intensity": {"active": true,"shared_in_central_agent": true},
+        "indoor_dry_bulb_temperature": {"active": true,"shared_in_central_agent": false},
+        "non_shiftable_load": {"active": true,"shared_in_central_agent": false},
+        "solar_generation": {"active": true,"shared_in_central_agent": false},
+        "electricity_pricing": {"active": true,"shared_in_central_agent": true}
+    },
+    "actions": {
+        "electrical_storage": {"active": true}
+    },
+    "agent": {
+        "type": "citylearn.agents.sac.SACBasicRBC",
+        "attributes": {
+            "hidden_dimension": [256, 256],
+            "discount": 0.9,
+            "tau": 0.005,
+            "lr": 0.001,
+            "batch_size": 512,
+            "replay_buffer_capacity": 100000.0,
+            "standardize_start_time_step": 2928,
+            "end_exploration_time_step": 2929,
+            "action_scaling_coef": 0.5,
+            "reward_scaling": 5.0,
+            "update_per_time_step": 2,
+            "alpha": 1.0
+        }
+    },
+    "reward_function": {
+        "type": "stage_1_using_citylearn_p.CustomRewardFunction",
+        "attributes": null
+    },
+    "buildings": {
+        "Building_1": {
+            "include": true,
+            "energy_simulation": "Building_1.csv",
+            "weather": "weather.csv",
+            "carbon_intensity": null,
+            "pricing": "pricing.csv",
+            "type": null,
+            "cooling_device": {
+                "type": "citylearn.energy_model.HeatPump",
+                "autosize": true,
+                "autosize_attributes": {
+                    "safety_factor": 1.0
+                },
+                "attributes": {
+                    "nominal_power": null,
+                    "efficiency": 0.2,
+                    "target_cooling_temperature": 8,
+                    "target_heating_temperature": 45
+                }
+            },
+            "dhw_device": {
+                "type": "citylearn.energy_model.ElectricHeater",
+                "autosize": true,
+                "attributes": {
+                    "nominal_power": null,
+                    "efficiency": 0.9
+                }
+            },
+            "electrical_storage": {
+                "type": "citylearn.energy_model.Battery",
+                "autosize": true,
+                "autosize_attributes": {
+                    "safety_factor": 3.0
+                },
+                "attributes": {
+                    "capacity": null,
+                    "loss_coefficient": 0.006,
+                    "nominal_power": 5000
+                }
+            },
+            "inactive_observations": [
+                "heating_storage_soc",
+                "electrical_storage_soc",
+                "carbon_intensity"
+            ],
+            "inactive_actions": [
+                "heating_storage",
+                "dhw_storage"
+            ]
+        }
+    }
+}
